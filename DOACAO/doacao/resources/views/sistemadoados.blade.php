@@ -73,11 +73,12 @@
                 </tr>
             </thead>
             <tbody>
-            @if($produtosdoados->count() > 0)
-            @foreach($produtosdoados as $produtosdoado)
+            @if($doados->count() > 0)
+            @foreach($doados as $doado)
                     <tr>
                         <td class="align-middle">{{ $loop->iteration }}</td>
-                        <td class="align-middle">{{ $produtosdoado->id }}</td>
+                        <td class="align-middle">{{ $doado->produto->NomeProduto }}</td>
+                        <td class="align-middle">{{ $doado->user->name }}</td>
                     </tr>
                 @endforeach
             @endif

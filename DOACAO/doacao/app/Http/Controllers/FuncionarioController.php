@@ -11,6 +11,10 @@ use App\Models\Produto;
 use App\Models\Itemdoado;
 use App\Models\Polo;
 use App\Models\Endereco;
+use App\Models\User;
+use App\Models\Reserva;
+use App\Models\Doado;
+use Illuminate\Support\Carbon;
 
 
 class FuncionarioController extends Controller  // Define a classe FuncionarioController que estende a classe Controller
@@ -59,15 +63,26 @@ class FuncionarioController extends Controller  // Define a classe FuncionarioCo
 
     public function dashboard()  // Método para exibir o painel do funcionário
     {
-        $produtos = Produto::all();
-        return view('dashboardfuncionario', ['produtos' => $produtos]); // Retorna a view 'dashboardfuncionario' para exibir o painel
+        $search = request('search');
+
+        if($search) {
+            $produtos = Produto::where([
+                ['NomeProduto', 'like', '%'.$search.'%']
+            ])->get();
+        }else{
+            $produtos = Produto::all();
+        }
+        return view('dashboardfuncionario', ['produtos' => $produtos, 'search' => $search]); // Retorna a view 'dashboardfuncionario' para exibir o painel
     }
 
     public function reservar()
     {  
-        $produtos = Produto::all();
-        return view('sistemareservar', ['produtos' => $produtos]);
+        $reservas = Reserva::all();
+        $funcionarios = Reserva::with('user')->get();
+        $funcionarios = Reserva::with('produto')->get();
+        return view('sistemareservar', ['reservas' => $reservas]);
     }
+
 
     public function edit($id)
     {
@@ -85,9 +100,9 @@ class FuncionarioController extends Controller  // Define a classe FuncionarioCo
 
     public function doados()
     {  
-        $itemdoados = Itemdoado::all();
+        $doados = Doado::all();
 
-        return view('sistemadoados', ['itemdoados' => $itemdoados]);
+        return view('sistemadoados', ['doados' => $doados]);
     }
 
     public function polo()  // Método para exibir o painel do funcionário
@@ -357,6 +372,113 @@ class FuncionarioController extends Controller  // Define a classe FuncionarioCo
         $polo = Polo::findOrFail($id)->update($request->all());
         return redirect()->route('editar-polo');
     }*/
+
+    public function createreserva($id)
+    {
+        $produto = Produto::findOrFail($id);
+        return view('cadastro-reserva', ['produto' => $produto]);
+    }
+
+    public function buscarcpf(Request $request)
+    {
+        $cpf = $request->cpf;
+        $user = User::where('cpf', $cpf)->first();
+
+        if($user){
+            return response()->json(['success' => true, 'data' => $user]);
+        } else {
+            // Se o usuário não existir, você pode criar um novo usuário aqui
+            $novoUser = new User();
+            $novoUser->cpf = $cpf;
+            // Você pode adicionar mais campos aqui, como nome, email, etc.
+            $novoUser->save();
+
+            return response()->json(['success' => true, 'data' => $novoUser]);
+        }
+    }
+
+
+    public function storereserva(Request $request)
+    {
+        $request->validate([
+            'idproduto' => 'required|exists:produtos,id',
+        ]);
+    
+        // Crie um objeto Carbon para obter a data e hora atual
+        $dataReserva = Carbon::now();
+    
+        $reserva = Reserva::create([
+            'IDProduto' => $request->idproduto,
+            'DataReserva' => $dataReserva, // Adiciona a data atual
+            'IdPessoaReservou' => $request->idpessoa,
+        ]);
+
+        // Atualize o status do produto para "Reservado"
+        $produto = Produto::findOrFail($request->idproduto);
+        $produto->Status = 'Reservado';
+        $produto->save();
+    
+        return response()->json(['message' => 'Reserva criada com sucesso'], 201);
+    }
+
+    public function createdoacao($id)
+    {
+        $produto = Produto::findOrFail($id);
+        return view('cadastro-doacao', ['produto' => $produto]);
+    }
+
+    public function createdoacaod($id)
+    {
+        $reserva = Reserva::findOrFail($id);
+        return view('cadastro-doacaod', ['reserva' => $reserva]);
+    }
+
+    public function storedoacao(Request $request)
+    {
+        $request->validate([
+            'idproduto' => 'required|exists:produtos,id',
+        ]);
+    
+        // Crie um objeto Carbon para obter a data e hora atual
+        $dataReserva = Carbon::now();
+    
+        $reserva = Doado::create([
+            'IDProduto' => $request->idproduto,
+            'DataReserva' => $dataReserva, // Adiciona a data atual
+            'IdComtemplado' => $request->idpessoa,
+        ]);
+
+        // Atualize o status do produto para "Reservado"
+        $produto = Produto::findOrFail($request->idproduto);
+        $produto->Status = 'Doado';
+        $produto->save();
+    
+        return response()->json(['message' => 'Doacao Realizada Com Sucesso'], 201);
+    }
+
+    public function storedoacaod(Request $request)
+    {
+        $request->validate([
+            'idproduto' => 'required|exists:produtos,id',
+        ]);
+    
+        // Crie um objeto Carbon para obter a data e hora atual
+        $dataReserva = Carbon::now();
+    
+        $reserva = Doado::create([
+            'IDProduto' => $request->idproduto,
+            'DataReserva' => $dataReserva, // Adiciona a data atual
+            'IdComtemplado' => $request->idpessoa,
+        ]);
+
+        // Atualize o status do produto para "Reservado"
+        $produto = Produto::findOrFail($request->idproduto);
+        $produto->Status = 'Doado';
+        $produto->save();
+    
+        return response()->json(['message' => 'Doacao Realizada Com Sucesso'], 201);
+    }
+
 }
 
 

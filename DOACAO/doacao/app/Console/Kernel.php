@@ -7,13 +7,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Adicione o agendamento da tarefa aqui
+        //$schedule->command('limpar:reservas')->everyMinutes(); // Executar diariamente
+        $schedule->call(function () {
+            \Artisan::call('limpar:reservas');
+        })->everyMinute();
     }
+    
 
     /**
      * Register the commands for the application.

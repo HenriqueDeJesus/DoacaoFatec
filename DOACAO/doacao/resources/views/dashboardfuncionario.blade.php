@@ -48,13 +48,20 @@
     <br>
     <br>
     <div class="box-search">
-        <input type="search" class="form-control w-25" placeholder="Pesquisar" id="pesquisar">
+    <form action="/loginfuncionario/dashboard" method="GET">
+        <input type="text" class="form-control w-25" placeholder="Pesquisar" id="search" name="search">
+    </form>
         <button onclick="searchData()" class="btn btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
             </svg>
         </button>
     </div>
+    @if($search)
+    <h2>Produto: {{$search}}</h2>
+    @else
+    <h2></h2>
+    @endif
     @include('includes.mensagens')
     <div class="m-5">
         <table class="table text-white table-bg">
@@ -75,6 +82,7 @@
             <tbody>
             @if($produtos->count() > 0)
             @foreach($produtos as $produto)
+            @if($produto->Status === 'Disponivel')
                     <tr>
                         <td class="align-middle">{{ $loop->iteration }}</td>
                         <td class="align-middle">{{ $produto->NomeProduto }}</td>
@@ -94,10 +102,14 @@
                             </a>
                             @include('modalproduto.delete')
                         </td>
-                         <td><a href='/' class='btn btn-success'>Doar</a></td>
-                         <td><a href='/' class='btn btn-warning'>Reservar Item</a></td>
+                         <td><a href='/loginfuncionario/cadastro-doacao/{{ $produto->id }}' class='btn btn-success'>Doar</a></td>
+                         <td><a href='/loginfuncionario/cadastro-reserva/{{ $produto->id }}' class='btn btn-warning'>Reservar Item</a></td>
                     </tr>
+                    @endif
                 @endforeach
+            @endif
+            @if($produtos->count() == 0 && $search)
+                <p>Não foi possivel encontrar {{$search}}</p>
             @endif
             </tbody>
         </table>

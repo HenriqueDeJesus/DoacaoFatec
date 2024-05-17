@@ -37,7 +37,8 @@ Route::get('/loginfuncionario/cadastro-funcionario', [FuncionarioController::cla
 Route::post('/loginfuncionario/cadastro-funcionario', [FuncionarioController::class, 'store'])->middleware('verificar_tipo_usuario');
 Route::get('/loginfuncionario/editar-funcionario/{id}', [FuncionarioController::class, 'editfuncionario'])->middleware('verificar_tipo_usuario');
 Route::put('/loginfuncionario/editar-funcionario/{id}', [FuncionarioController::class, 'updateFuncionario'])->middleware('verificar_tipo_usuario');
-Route::delete('/loginfuncionario/delete/{id}', [FuncionarioController::class, 'destroyFuncionario'])->middleware('verificar_tipo_usuario')->name('destroyFuncionario');
+Route::delete('/loginfuncionario/{id}', [FuncionarioController::class, 'destroyFuncionario'])->middleware('verificar_tipo_usuario')->name('destroyFuncionario');
+
 
 
 Route::get('/loginfuncionario/cadastro-produto', [FuncionarioController::class, 'createproduto'])->middleware('verificar_tipo_usuario');
@@ -55,6 +56,18 @@ Route::put('/loginfuncionario/editar-polo/{id}', [FuncionarioController::class, 
 Route::delete('/loginfuncionario/delete/{id}', [FuncionarioController::class, 'destroyPolo'])->middleware('verificar_tipo_usuario')->name('destroyPolo');
 
 /*Route::post('/loginfuncionario/editar-polo/{id}/editar-polo', [FuncionarioController::class, 'editpolo'])->name('polo.edit')->middleware('verificar_tipo_usuario');*/
+
+Route::get('/loginfuncionario/cadastro-reserva/{id}', [FuncionarioController::class, 'createreserva'])->middleware('verificar_tipo_usuario');
+Route::post('/loginfuncionario/cadastro-reserva', [FuncionarioController::class, 'storereserva'])->middleware('verificar_tipo_usuario');
+
+Route::get('/buscar-usuario-por-cpf', [FuncionarioController::class, 'buscarcpf'])->name('buscarcpf');
+
+
+Route::get('/loginfuncionario/cadastro-doacao/{id}', [FuncionarioController::class, 'createdoacao'])->middleware('verificar_tipo_usuario');
+Route::post('/loginfuncionario/cadastro-doacao', [FuncionarioController::class, 'storedoacao'])->middleware('verificar_tipo_usuario');
+
+Route::get('/loginfuncionario/cadastro-doacaod/{id}', [FuncionarioController::class, 'createdoacaod'])->middleware('verificar_tipo_usuario');
+Route::post('/loginfuncionario/cadastro-doacaod', [FuncionarioController::class, 'storedoacaod'])->middleware('verificar_tipo_usuario');
 
 Route::get('/loginfuncionario', function () {
     return view('/loginfuncionario');

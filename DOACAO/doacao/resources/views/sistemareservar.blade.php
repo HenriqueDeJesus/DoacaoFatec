@@ -71,17 +71,16 @@
                 </tr>
             </thead>
             <tbody>
-            @if($produtos->count() > 0)
-            @foreach($produtos as $produto)
+            @if($reservas->count() > 0)
+            @foreach($reservas as $reserva)
                     <tr>
                         <td class="align-middle">{{ $loop->iteration }}</td>
-                        <td class="align-middle">{{ $produto->produtoname }}</td>
-                        <td class="align-middle">{{ $produto->descricao }}</td>
-                        <td class="align-middle">{{ $produto->polo }}</td>
-                        <td class="align-middle">{{ $produto->endereco }}</td>
-                        <td class="align-middle">{{ $produto->tipo }}</td>
-                        <td class="align-middle">{{ $produto->tipo }}</td>
-                        <td><a href='/' class='btn btn-success'>Doar</a></td>
+                        <td class="align-middle">{{ $reserva->produto->NomeProduto }}</td>
+                        <td class="align-middle">{{ $reserva->user->name }}</td>
+                        <td class="align-middle">{{ $reserva->DataReserva }}</td>
+                   
+                        
+                        <td><a href='/loginfuncionario/cadastro-doacaod/{{ $reserva->id }}' class='btn btn-success'>Doar</a></td>
                     </tr>
                 @endforeach
             @endif

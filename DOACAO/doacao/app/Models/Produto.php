@@ -12,4 +12,9 @@ class Produto extends Model
     protected $guarded = [];
 
     protected $table = 'produtos';
+
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class);
+    }
 }
